@@ -1,0 +1,12 @@
+[project]
+name = "tubesummary"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "argparse>=1.4.0",
+    "google-cloud-aiplatform>=1.75.0",
+    "python-dotenv>=1.0.1",
+    "youtube-transcript-api>=0.6.3",
+]
