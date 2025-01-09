@@ -1,32 +1,39 @@
 import json
 from datetime import timedelta
-import markdown2
-import pdfkit
+import argparse
+from src.common.output_file_manager import provide_file_path, get_latest_file
 
 def format_timestamp(seconds):
     """Convert seconds to HH:MM:SS format"""
     return str(timedelta(seconds=seconds))
 
-def json_to_markdown(json_data):
+def json_to_markdown(json_data, video_id):
     """Convert lecture JSON to markdown format"""
     # Start with the overview
     markdown = f"# Lecture Notes\n\n## Overview\n\n{json_data['overview']}\n\n"
+    citation = 1
     
     # Process each topic
     for topic in json_data['topics']:
         # Add topic header with timestamps
-        start_time = format_timestamp(topic['time_start'])
-        end_time = format_timestamp(topic['time_end'])
-        markdown += f"## {topic['title']} ({start_time} - {end_time})\n\n"
+        # start_time = format_timestamp(topic['time_start'])
+        # end_time = format_timestamp(topic['time_end']) 
+        link = f"https://www.youtube.com/watch?v={video_id}&t={int(topic['time_start'])}s"
+
+        markdown += f"## {topic['title']} [<sup>{citation}</sup>]({link})\n\n"
+        citation += 1
         
         # Process description items
         for desc_item in topic['description']:
             if desc_item['type'] == 'text':
                 markdown += f"{desc_item['content']}\n\n"
             
-            # elif desc_item['type'] == 'snapshot':
-            #     snapshot_time = format_timestamp(float(desc_item['content']))
-            #     markdown += f"📸 *Snapshot at {snapshot_time}*\n\n"
+            elif desc_item['type'] == 'snapshot':
+                snapshot_time_in_seconds = float(desc_item['content'])
+                snapshot_time = format_timestamp(snapshot_time_in_seconds)
+                link = f"https://www.youtube.com/watch?v={video_id}&t={int(snapshot_time_in_seconds)}s"
+                markdown += f"📸 *Snapshot from {snapshot_time}* [<sup>{citation}</sup>]({link})\n\n"
+                citation += 1
             
             elif desc_item['type'] == 'example':
                 markdown += f"**Example:**\n> {desc_item['content']}\n\n"
@@ -36,22 +43,21 @@ def json_to_markdown(json_data):
     
     return markdown.strip()
 
-def save_markdown_as_pdf(markdown_content, output_pdf_path):
-    html_content = markdown2.markdown(markdown_content)
-    pdfkit.from_string(html_content, output_pdf_path)
-
 # Example usage
 if __name__ == "__main__":
-    # For reading from a file
-    with open('./output/STEP_20_00_context_cache_transcripts/study_notes_2025-01-08_18-22-49.json') as f:
-        notes_json = json.load(f)
+    parser = argparse.ArgumentParser(description="Create study notes in markdown")
+    parser.add_argument("--video_id", "-v", required=True, help="The ID of the YouTube video")
+    args = parser.parse_args()
+
+    notes_json_file = get_latest_file('./output/STEP_20_00_create_study_notes_json', extension=".json")
+    notes_json = json.load(open(notes_json_file))
+    markdown_output = json_to_markdown(notes_json, args.video_id)
     
-    # Using sample data
-    markdown_output = json_to_markdown(notes_json)
-    
+    # get markdown file path
+    markdown_file_path = provide_file_path("ready_notes", ".md", media=False)
     # Write to file
-    with open('lecture_notes.md', 'w') as file:
+    with open(markdown_file_path, 'w') as file:
         file.write(markdown_output)
         
-    print("Markdown file has been created successfully!")
+    print(f"Markdown file saved at: {markdown_file_path}")
 
