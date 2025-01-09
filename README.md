@@ -2,7 +2,7 @@
 
 Tube Summary is a powerful tool designed to enhance the learning experience by extracting and summarizing educational content from YouTube lectures. This project utilizes advanced language models to download youtube video transcripts, create detailed study notes, and convert these notes into user-friendly markdown files. The primary goal is to help students and lifelong learners efficiently capture and review key information from youtube educational videos/lectures. 🚀
 
-![Alt text](resources/tube_summary_1.png)
+![Alt text](resources/tube_summary_1.svg)
 
 ## Setup 🛠️
 
