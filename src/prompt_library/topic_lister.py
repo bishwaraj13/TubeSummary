@@ -3,6 +3,7 @@ from vertexai.generative_models import GenerationConfig
 topic_lister_prompt = '''
 Your task is to analyze the following video lecture transcript and:
 
+1. Add a title to the entire lecture
 1. Create a high-level overview of the entire lecture
 2. Identify distinct main topics/segments
 3. Determine the timestamp boundaries for each segment
@@ -18,6 +19,7 @@ Important Instructions:
 Please analyze the following transcript and return the results in this exact JSON format:
 
 {{
+    "title": "Clear and descriptive lecture title",
     "overview": "A concise 2-3 sentence summary of the entire lecture",
     "topics": [
         {{
@@ -32,6 +34,10 @@ Please analyze the following transcript and return the results in this exact JSO
 schema = {
     "type": "object",
     "properties": {
+        "title": {
+            "type": "string",
+            "description": "A clear and descriptive lecture title"
+        },
         "overview": {
             "type": "string",
             "description": "A concise 2-3 sentence summary of the entire lecture"

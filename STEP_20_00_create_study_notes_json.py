@@ -75,13 +75,14 @@ def main():
 
     print("Creating segments...")
     segments = create_segments(cache_id)
+    notes_title = segments['title']
 
     for segment in segments['topics']:
         print(f"Describing segment: {segment['title']}")
         segment_description = describe_segment(cache_id, segment['title'])
         segment['description'] = segment_description['content']
 
-    file_path = provide_file_path("study_notes", ".json", media=False)
+    file_path = provide_file_path(notes_title.lower().replace(" ", "_"), ".json", media=False)
 
     with open(file_path, 'w', encoding='utf-8') as f:
         json.dump(segments, f, ensure_ascii=False, indent=4)
