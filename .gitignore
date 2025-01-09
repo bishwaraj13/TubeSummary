@@ -46,9 +46,6 @@ ENV/
 *.mkv
 *.mp3
 *.wav
-*.jpg
-*.jpeg
-*.png
 *.gif
 *.ico
 *.pdf
